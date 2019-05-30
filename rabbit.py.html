@@ -1,0 +1,73 @@
+<html>
+<head>
+<title>rabbit.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6a8759;}
+.s4 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+rabbit.py</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">__future__ </span><span class="s0">import </span><span class="s1">print_function</span><span class="s0">, </span><span class="s1">division</span>
+<span class="s0">import </span><span class="s1">numpy </span><span class="s0">as </span><span class="s1">np</span>
+<span class="s0">import </span><span class="s1">matplotlib.pyplot </span><span class="s0">as </span><span class="s1">plt</span>
+<span class="s0">import </span><span class="s1">math</span>
+
+<span class="s2"># code by John K. Reyner, 2018</span>
+
+# This code will run everything as needed to get the plot to show. You just need the packages (above) installed into
+# Python and you can run the code as-is.
+
+<span class="s0">def </span><span class="s1">is_int(val):</span>
+    <span class="s0">if </span><span class="s1">type(val) == int:</span>
+        <span class="s0">return True</span>
+    else<span class="s1">:</span>
+        <span class="s0">if </span><span class="s1">val.is_integer():</span>
+            <span class="s0">return True</span>
+        else<span class="s1">:</span>
+            <span class="s0">return False</span>
+
+<span class="s1">i = float(input(</span><span class="s3">&quot;How many rabbits are you starting with (in millions)?&quot;</span><span class="s1">))</span>
+g = float(input(<span class="s3">&quot;Please input a monthly growth rate (between 0 and 1).&quot;</span><span class="s1">))</span>
+d = float(input(<span class="s3">&quot;Please input a monthly death rate (between 0 and 1).&quot;</span><span class="s1">))</span>
+p = float(input(<span class="s3">&quot;Please input a lethality rate of the poison (between 0 and 1, 0 if no poison is to be applied).&quot;</span><span class="s1">))</span>
+a = int(input(<span class="s3">&quot;Poison will be applied once every how many months?&quot;</span><span class="s1">))</span>
+r = float(input(<span class="s3">&quot;How much do you want to reduce the growth rate outside of Summer months (between 0 and 1)?&quot;</span><span class="s1">))</span>
+s = float(input(<span class="s3">&quot;How much do you want to reduce the growth rate during the Summer months (between 0 and 1)?&quot;</span><span class="s1">))</span>
+t = int(input(<span class="s3">&quot;How many months do you wish to examine the rabbit population?&quot;</span><span class="s1">))</span>
+
+<span class="s0">def </span><span class="s1">rabf(t</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s1">g</span><span class="s0">, </span><span class="s1">d</span><span class="s0">, </span><span class="s1">p</span><span class="s0">, </span><span class="s1">a</span><span class="s0">, </span><span class="s1">r</span><span class="s0">, </span><span class="s1">s):</span>
+    rab = np.zeros(t+<span class="s4">1</span><span class="s1">)</span>
+    rab[<span class="s4">0</span><span class="s1">] = i</span>
+    g = g - r
+    g2 = g - s
+    <span class="s0">for </span><span class="s1">x </span><span class="s0">in </span><span class="s1">range(</span><span class="s4">0</span><span class="s0">,</span><span class="s1">t):</span>
+        month = x
+        <span class="s0">if </span><span class="s1">is_int(month/a) </span><span class="s0">is True</span><span class="s1">:</span>
+            <span class="s0">if </span><span class="s1">is_int(month/</span><span class="s4">12</span><span class="s1">) </span><span class="s0">is True</span><span class="s1">:</span>
+                rab[month + <span class="s4">1</span><span class="s1">] = rab[month] + (g2-p)*rab[month]</span>
+            <span class="s0">else</span><span class="s1">:</span>
+                rab[month + <span class="s4">1</span><span class="s1">] = rab[month] + (g-p)*rab[month]</span>
+        <span class="s0">else</span><span class="s1">:</span>
+            <span class="s0">if </span><span class="s1">is_int((month + </span><span class="s4">1</span><span class="s1">)/</span><span class="s4">12</span><span class="s1">) </span><span class="s0">is True or </span><span class="s1">is_int((month - </span><span class="s4">1</span><span class="s1">)/</span><span class="s4">12</span><span class="s1">) </span><span class="s0">is True</span><span class="s1">:</span>
+                    rab[month+<span class="s4">1</span><span class="s1">] = rab[month] + (g2 - d) * rab[month]</span>
+            <span class="s0">else</span><span class="s1">:</span>
+                rab[month + <span class="s4">1</span><span class="s1">] = rab[month] + (g - d) * rab[month]</span>
+    plt.plot(range(t + <span class="s4">1</span><span class="s1">)</span><span class="s0">, </span><span class="s1">rab</span><span class="s0">, </span><span class="s1">color=</span><span class="s3">'red'</span><span class="s1">)</span>
+    plt.xlabel(<span class="s3">'Time (months)'</span><span class="s1">)</span>
+    plt.ylabel(<span class="s3">'Total number of rabbits (in millions)'</span><span class="s1">)</span>
+    plt.title(<span class="s3">'Rabbit population by month'</span><span class="s1">)</span>
+
+rabf(t<span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s1">g</span><span class="s0">, </span><span class="s1">d</span><span class="s0">, </span><span class="s1">p</span><span class="s0">, </span><span class="s1">a</span><span class="s0">, </span><span class="s1">r</span><span class="s0">, </span><span class="s1">s)</span>
+
+plt.show()</pre>
+</body>
+</html>
